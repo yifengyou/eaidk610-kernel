@@ -1,5 +1,11 @@
+/log.*
 *.img
 
+include/generated
+Module.symvers
+/.version
+/.config
+.*.ver
 *.o.cmd
 *.o
 .*.cmd
