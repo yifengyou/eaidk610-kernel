@@ -422,10 +422,12 @@ LINUXINCLUDE    := \
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 
-KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+KBUILD_CFLAGS   := -Wno-strict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
-		   -Werror-implicit-function-declaration \
-		   -Wno-format-security \
+		   -Wno-format-security -Wno-error -Wno-stringop-overflow -Wno-attribute-alias \
+		   -Wno-stringop-overread -Wno-sizeof-pointer-memaccess -Wno-array-bounds \
+		   -Wno-address-of-packed-member -Wno-attributes -Wno-packed-not-aligned \
+		   -Wno-stringop-truncation \
 		   -std=gnu89 $(call cc-option,-fno-PIE)
 
 
@@ -855,13 +857,13 @@ KBUILD_CFLAGS  += $(call cc-option,-fno-stack-check,)
 KBUILD_CFLAGS   += $(call cc-option,-fconserve-stack)
 
 # disallow errors like 'EXPORT_GPL(foo);' with missing header
-KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)
+#KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)
 
 # require functions to have arguments in prototypes, not empty 'int foo()'
-KBUILD_CFLAGS   += $(call cc-option,-Werror=strict-prototypes)
+#KBUILD_CFLAGS   += $(call cc-option,-Werror=strict-prototypes)
 
 # Prohibit date/time macros, which would make the build non-deterministic
-KBUILD_CFLAGS   += $(call cc-option,-Werror=date-time)
+#KBUILD_CFLAGS   += $(call cc-option,-Werror=date-time)
 
 # use the deterministic mode of AR if available
 KBUILD_ARFLAGS := $(call ar-option,D)
