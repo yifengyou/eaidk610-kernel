@@ -5,7 +5,7 @@ echo $PATH
 
 CURRENTDIR=`pwd`
 echo "CURRENTDIR: ${CURRENTDIR}"
-BUILDDIR=${CURRENTDIR}-build
+BUILDDIR=${CURRENTDIR}-build-android
 echo "BUILDDIR: ${BUILDDIR}"
 if [ -d ${BUILDDIR} ]; then
     rm -rf ${BUILDDIR}
