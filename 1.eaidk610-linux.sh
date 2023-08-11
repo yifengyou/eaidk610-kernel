@@ -7,13 +7,9 @@ echo $PATH
 
 CURRENTDIR=`pwd`
 echo "CURRENTDIR: ${CURRENTDIR}"
-BUILDDIR=${CURRENTDIR}-build-linux
+BUILDDIR=${CURRENTDIR}
 echo "BUILDDIR: ${BUILDDIR}"
-if [ -d ${BUILDDIR} ]; then
-	rm -rf ${BUILDDIR}
-fi
-mkdir -p ${BUILDDIR}
-exec > >(tee ${BUILDDIR}/build.log) 2>&1
+exec > >(tee ${BUILDDIR}/log.eaidk-linux.log) 2>&1
 
 echo    "******************************"
 echo    "*         Clean              *"
@@ -24,7 +20,7 @@ echo "make distclean done! [$?]"
 echo    "******************************"
 echo    "*     Make Kernel Config     *"
 echo    "******************************"
-make O=${BUILDDIR} ARCH=arm64 CROSS_COMPILE="aarch64-none-linux-gnu-" rockchip_linux_defconfig
+make Q= ARCH=arm64 CROSS_COMPILE="aarch64-none-linux-gnu-" rockchip_linux_defconfig
 echo "-> make rk3399_linux_defconfig done!"
 
 # fix yylloc redefine bug
@@ -35,13 +31,13 @@ fi
 echo    "******************************"
 echo    "*     Make AArch64 Kernel    *"
 echo    "******************************"
-make O=${BUILDDIR} rk3399-eaidk-linux.img ARCH=arm64 CROSS_COMPILE="aarch64-none-linux-gnu-" -j `nproc`
+make Q= rk3399-eaidk-linux.img ARCH=arm64 CROSS_COMPILE="aarch64-none-linux-gnu-" -j `nproc`
 echo "-> make rk3399-eaidk-linux.img done!"
 
 echo    "******************************"
 echo    "*     Make modules           *"
 echo    "******************************"
-make O=${BUILDDIR} modules ARCH=arm64 CROSS_COMPILE="aarch64-none-linux-gnu-" -j `nproc`
+make Q= modules ARCH=arm64 CROSS_COMPILE="aarch64-none-linux-gnu-" -j `nproc`
 echo "-> make modules done!"
 
 echo "All done! Bye~"
