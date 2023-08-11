@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
@@ -13,9 +13,10 @@ if [ -d ${BUILDDIR} ]; then
 	rm -rf ${BUILDDIR}
 fi
 mkdir -p ${BUILDDIR}
+exec > >(tee ${BUILDDIR}/build.log) 2>&1
 
 echo    "******************************"
-echo    "*     Clean Kernel Config     *"
+echo    "*         Clean              *"
 echo    "******************************"
 make distclean
 echo "make distclean done! [$?]"
@@ -24,17 +25,23 @@ echo    "******************************"
 echo    "*     Make Kernel Config     *"
 echo    "******************************"
 make O=${BUILDDIR} ARCH=arm64 CROSS_COMPILE="aarch64-none-linux-gnu-" rockchip_linux_defconfig
-echo "make rk3399_linux_defconfig done! [$?]"
+echo "-> make rk3399_linux_defconfig done!"
 
 # fix yylloc redefine bug
-# sed -i 's/^YYLTYPE yylloc;$/extern YYLTYPE yylloc;/g' scripts/dtc/dtc-lexer.lex.c
+if [ -f scripts/dtc/dtc-lexer.lex.c ]; then
+	sed -i 's/^YYLTYPE yylloc;$/extern YYLTYPE yylloc;/g' scripts/dtc/dtc-lexer.lex.c
+fi
 
 echo    "******************************"
 echo    "*     Make AArch64 Kernel    *"
 echo    "******************************"
-make O=${BUILDDIR} rk3399-eaidk-linux.img ARCH=arm64 CROSS_COMPILE="aarch64-none-linux-gnu-" -j `nproc` | tee log.eaidk610linux
-echo "make rk3399-eaidk-linux.img done! [$?]"
+make O=${BUILDDIR} rk3399-eaidk-linux.img ARCH=arm64 CROSS_COMPILE="aarch64-none-linux-gnu-" -j `nproc`
+echo "-> make rk3399-eaidk-linux.img done!"
 
-make O=${BUILDDIR} modules ARCH=arm64 CROSS_COMPILE="aarch64-none-linux-gnu-" -j `nproc` | tee log.eaidk610linux
+echo    "******************************"
+echo    "*     Make modules           *"
+echo    "******************************"
+make O=${BUILDDIR} modules ARCH=arm64 CROSS_COMPILE="aarch64-none-linux-gnu-" -j `nproc`
+echo "-> make modules done!"
 
-echo "All done!"
+echo "All done! Bye~"
